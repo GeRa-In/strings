@@ -1,5 +1,3 @@
-// Пакет datafile предназначен для чтения данных из файлов.
-
 package datafile
 
 import (
@@ -12,19 +10,18 @@ func GetStrings(fileName string) ([]string, error) {
 	var lines []string
 	file, err := os.Open(fileName)
 	if err != nil {
-		retirn nil, err
+		return nil, err
 	}
+	defer file.Close() // Гарантирует закрытие файла даже при ошибках
+
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		line := scanner.Text()
-		lines = append(lines, line)
+		lines = append(lines, scanner.Text())
 	}
-	err = file.Close()
-	if err != nil {
-		retirn nil, err
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
 	}
-	if scanner.Err() != nil {
-		returnn nil, scanner.Err()
-	}
+
 	return lines, nil
 }
